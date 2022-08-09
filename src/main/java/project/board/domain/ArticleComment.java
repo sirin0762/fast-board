@@ -26,11 +26,11 @@ public class ArticleComment extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    private Article article;
-
     @Column(nullable = false, length = 500)
     private String content;
+
+    @ManyToOne(optional = false)
+    private Article article;
 
     protected ArticleComment() {}
 
