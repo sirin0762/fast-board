@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>게시판 페이지</title>
 </head>
 <body>
 
-    <header th:replace="~{component/header :: header}"></header>
+    <header id="header"></header>
 
     <main>
         <form>
             <label for="select-type" hidden>유형</label>
-            <select id="select-type", name="select-type">
+            <select id="select-type" name="select-type">
                 <option value="title">제목</option>
                 <option value="content">본문</option>
                 <option value="ID">작성자</option>
@@ -68,6 +68,6 @@
         </nav>
     </main>
 
-    <footer th:replace="~{component/footer :: footer}"></footer>
+    <footer id="footer"></footer>
 </body>
 </html>
