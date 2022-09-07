@@ -1,7 +1,9 @@
 package project.board.domain;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,12 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
 @Getter
-@ToString
+@ToString(callSuper = true)
 @Table(indexes = {
     @Index(columnList = "content"),
     @Index(columnList = "createdAt"),
@@ -29,18 +32,23 @@ public class ArticleComment extends BaseEntity{
     @Column(nullable = false, length = 500)
     private String content;
 
-    @ManyToOne(optional = false)
+    @Setter @ManyToOne(optional = false)
     private Article article;
+
+    @Setter @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private UserAccount userAccount;
 
     protected ArticleComment() {}
 
-    private ArticleComment(Article article, String content) {
+    private ArticleComment(UserAccount userAccount, Article article, String content) {
+        this.userAccount = userAccount;
         this.article = article;
         this.content = content;
     }
 
-    public static ArticleComment of(Article article, String content) {
-        return new ArticleComment(article, content);
+    public static ArticleComment of(UserAccount userAccount, Article article, String content) {
+        return new ArticleComment(userAccount, article, content);
     }
 
     @Override
