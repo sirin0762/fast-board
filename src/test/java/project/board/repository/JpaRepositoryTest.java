@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import project.board.configuration.JpaConfiguration;
 import project.board.domain.Article;
+import project.board.domain.ArticleComment;
 import project.board.domain.UserAccount;
 
 import java.util.List;
@@ -91,5 +92,38 @@ class JpaRepositoryTest {
         // then
         assertThat(articleRepository.count()).isEqualTo(previousArticleCount - 1);
         assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
+    }
+
+    @Test
+    @DisplayName("Jpa query Derivation 테스트")
+    void jpaQueryDerivationTest() {
+        Long articleId = 1L;
+        List<ArticleComment> articleComments = articleCommentRepository.findByArticleId(articleId);
+
+        System.out.println("check");
+
+
+    }
+
+    private ArticleComment createArticleComment(String content) {
+        return ArticleComment.of(
+            createUserAccount(),
+            createArticle(),
+            content
+        );
+    }
+
+    private UserAccount createUserAccount() {
+        return UserAccount.of(
+            "sirin",
+            "password",
+            "sirin@email.com",
+            "sirin",
+            "memo"
+        );
+    }
+
+    private Article createArticle() {
+        return Article.of(createUserAccount(), "title", "content", "hashtag");
     }
 }
