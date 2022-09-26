@@ -1,6 +1,5 @@
 package project.board.service;
 
-import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,23 +8,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 import project.board.domain.Article;
-import project.board.domain.UserAccount;
-import project.board.dto.ArticleWithCommentsDto;
 import project.board.domain.type.SearchType;
 import project.board.dto.ArticleDto;
-import project.board.dto.UserAccountDto;
+import project.board.dto.ArticleWithCommentsDto;
 import project.board.repository.ArticleRepository;
 import project.board.repository.UserAccountRepository;
+import static project.board.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
 
 @DisplayName("비즈니스 로직 - 게시글")
 @ExtendWith(MockitoExtension.class)
@@ -193,59 +192,6 @@ class ArticleServiceTest {
         // then
         assertThat(articles).isEqualTo(Page.empty());
         then(articleRepository).should().findByHashtag(hashtag, pageable);
-    }
-
-    private Article createArticle() {
-        Article article = Article.of(
-            createUserAccount(),
-            "title",
-            "content",
-            "hashtag"
-        );
-        ReflectionTestUtils.setField(article, "id", 1L);
-
-        return article;
-    }
-
-    private UserAccount createUserAccount() {
-        return UserAccount.of(
-            "sirin",
-            "password",
-            "sirin@gmail.com",
-            "Sirin0784",
-            null
-        );
-    }
-
-    private UserAccountDto createUserAccountDto() {
-        return UserAccountDto.of(
-            "sirin",
-            "password",
-            "sirin@gmail.com",
-            "Sirin0784",
-            "memo",
-            LocalDateTime.now(),
-            "sirin",
-            LocalDateTime.now(),
-            "sirin"
-        );
-    }
-
-    private ArticleDto createArticleDto() {
-        return createArticleDto("title", "content", "hashtag");
-    }
-
-    private ArticleDto createArticleDto(String title, String content, String hashtag) {
-        return ArticleDto.of(1L,
-            createUserAccountDto(),
-            title,
-            content,
-            hashtag,
-            LocalDateTime.now(),
-            "createdBy",
-            LocalDateTime.now(),
-            "modifiedBy"
-        );
     }
 
 }
