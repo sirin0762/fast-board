@@ -6,19 +6,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import project.board.domain.Article;
+import project.board.Fixture;
 import project.board.domain.ArticleComment;
-import project.board.domain.UserAccount;
 import project.board.dto.ArticleCommentDto;
-import project.board.dto.UserAccountDto;
 import project.board.repository.ArticleCommentRepository;
 import project.board.repository.ArticleRepository;
+import static project.board.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -129,55 +127,5 @@ class ArticleCommentServiceTest {
         // Then
         then(articleCommentRepository).should().deleteById(articleCommentId);
     }
-
-    private ArticleCommentDto createArticleCommentDto(String content) {
-        return ArticleCommentDto.of(
-            1L,
-            1L,
-            createUserAccountDto(),
-            content,
-            LocalDateTime.now(),
-            "sirin",
-            LocalDateTime.now(),
-            "sirin"
-        );
-    }
-
-    private UserAccountDto createUserAccountDto() {
-        return UserAccountDto.of(
-            "sirin",
-            "password",
-            "sirin@email.com",
-            "sirin",
-            "memo",
-            LocalDateTime.now(),
-            "sirin",
-            LocalDateTime.now(),
-            "sirin"
-        );
-    }
-
-    private ArticleComment createArticleComment(String content) {
-        return ArticleComment.of(
-            createUserAccount(),
-            createArticle(),
-            content
-        );
-    }
-
-    private UserAccount createUserAccount() {
-        return UserAccount.of(
-            "sirin",
-            "password",
-            "sirin@email.com",
-            "sirin",
-            "memo"
-        );
-    }
-
-    private Article createArticle() {
-        return Article.of(createUserAccount(), "title", "content", "hashtag");
-    }
-
 
 }
