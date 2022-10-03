@@ -8,11 +8,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import project.board.configuration.SecurityConfiguration;
 import project.board.service.ArticleService;
+import project.board.service.PaginationService;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.anyInt;
 import static project.board.Fixture.*;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -33,7 +40,8 @@ class ArticleControllerTest {
 
     private final MockMvc mvc;
 
-    @MockBean ArticleService articleService;
+    @MockBean private ArticleService articleService;
+    @MockBean private PaginationService paginationService;
 
     public ArticleControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
@@ -44,14 +52,46 @@ class ArticleControllerTest {
     public void givenNothing_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
         // given
         given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumber(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
         // when & then
         mvc.perform(get("/articles"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(view().name("articles/index"))
-            .andExpect(model().attributeExists("articles"));
-        then(articleService)
-            .should().searchArticles(eq(null), eq(null), any(Pageable.class));
+            .andExpect(model().attributeExists("articles"))
+            .andExpect(model().attributeExists("paginationBarNumbers"));
+        then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumber(anyInt(), anyInt());
+    }
+
+    @DisplayName("[view][GET] 게시판 페이지 - 페이징, 정렬 기능")
+    @Test
+    void givenPagingAndSortingParams_whenSearchingArticlesPage_thenReturnsArticlesPage() throws Exception {
+        // given
+        String sortName = "title";
+        String direction = "desc";
+        int pageNumber = 0;
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
+        List<Integer> barNumbers = List.of(1, 2, 3, 4, 5);
+        given(articleService.searchArticles(null, null, pageable)).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumber(pageable.getPageNumber(), Page.empty().getTotalPages())).willReturn(barNumbers);
+
+        // when
+        mvc.perform(
+                    get("/articles")
+                        .queryParam("page", String.valueOf(pageNumber))
+                        .queryParam("size", String.valueOf(pageSize))
+                        .queryParam("sort", sortName + "," + direction)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attribute("paginationBarNumbers", barNumbers));
+
+        // then
+        then(articleService).should().searchArticles(null, null, pageable);
+        then(paginationService).should().getPaginationBarNumber(pageable.getPageNumber(), Page.empty().getTotalPages());
     }
 
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
