@@ -63,4 +63,8 @@ public class ArticleComment extends BaseEntity{
         return Objects.hash(id);
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
 }
