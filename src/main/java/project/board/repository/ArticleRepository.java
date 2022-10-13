@@ -11,12 +11,16 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import project.board.domain.Article;
 import project.board.domain.QArticle;
+import project.board.repository.querydsl.ArticleRepositoryCustom;
+
+import java.util.List;
 
 @RepositoryRestResource
 public interface ArticleRepository extends
     JpaRepository<Article, Long>,
     QuerydslPredicateExecutor<Article>,
-    QuerydslBinderCustomizer<QArticle>
+    QuerydslBinderCustomizer<QArticle>,
+    ArticleRepositoryCustom
 {
 
     Page<Article> findByTitleContaining(String title, Pageable pageable);
