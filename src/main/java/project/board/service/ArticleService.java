@@ -13,6 +13,7 @@ import project.board.dto.ArticleWithCommentsDto;
 import project.board.repository.ArticleRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,7 +47,16 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticlesViaHashtag(String hashtag, Pageable pageable) {
-        return Page.empty();
+        if (hashtag == null || hashtag.isBlank()) {
+            return Page.empty();
+        }
+
+        return articleRepository.findByHashtag(hashtag, pageable).map(ArticleDto::from);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getHashtags() {
+        return articleRepository.findAllDistinctHashtags();
     }
 
     public void saveArticle(ArticleDto dto) {
@@ -67,6 +77,8 @@ public class ArticleService {
     public void deleteArticle(long articleId) {
         articleRepository.deleteById(articleId);
     }
+
+
 
 
 }

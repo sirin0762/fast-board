@@ -17,6 +17,7 @@ import project.board.repository.UserAccountRepository;
 import static project.board.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -187,11 +188,26 @@ class ArticleServiceTest {
         given(articleRepository.findByHashtag(hashtag, pageable)).willReturn(Page.empty(pageable));
 
         // when
-        Page<ArticleDto> articles = sut.searchArticlesViaHashtag(null, pageable);
+        Page<ArticleDto> articles = sut.searchArticlesViaHashtag(hashtag, pageable);
 
         // then
-        assertThat(articles).isEqualTo(Page.empty());
+        assertThat(articles).isEqualTo(Page.empty(pageable));
         then(articleRepository).should().findByHashtag(hashtag, pageable);
+    }
+
+    @DisplayName("해시테그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
+    @Test
+    void givenNothing_whenCalling_thenReturnsHashtags() {
+        // given
+        List<String> expectedHashtags = List.of("#java", "#spring", "#boot");
+        given(articleRepository.findAllDistinctHashtags()).willReturn(expectedHashtags);
+
+        // when
+        List<String> hashtags = sut.getHashtags();
+
+        // then
+        assertThat(hashtags).isEqualTo(expectedHashtags);
+        then(articleRepository).should().findAllDistinctHashtags();
     }
 
 }
