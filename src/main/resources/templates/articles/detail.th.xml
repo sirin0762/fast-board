@@ -9,6 +9,11 @@
             <attr sel="p" th:text="${article.content}"/>
             <attr sel="td.user-id" th:text="${article.nickname}"/>
             <attr sel="td.created-at/time" th:datetime="${article.createdAt}" th:text="${#temporals.format(article.createdAt, 'yyyy-mm-dd')}"/>
+
+            <attr sel="#article-buttons">
+                <attr sel="#update-article-btn" th:href="'/articles/' + *{id} + '/form'" />
+                <attr sel="#delete-article-form" th:action="'/articles/' + *{id} + '/delete'" th:method="post"/>
+            </attr>
         </attr>
 
         <attr sel="#article-comments">
