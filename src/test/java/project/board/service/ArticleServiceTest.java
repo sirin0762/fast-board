@@ -68,6 +68,42 @@ class ArticleServiceTest {
         then(articleRepository).should().findByTitleContaining(searchKeyword, pageable);
     }
 
+    @DisplayName("게시글 ID를 조회하면, 댓글 달린 게시글을 반환한다.")
+    @Test
+    void givenArticleId_whenSearchArticleWithComments_thenReturnsArticleWithComments() {
+        // given
+        Long articleId = 1L;
+        Article article = createArticle();
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
+
+        // when
+        ArticleWithCommentsDto dto = sut.getArticleWithComments(articleId);
+
+        // then
+        assertThat(dto)
+            .hasFieldOrPropertyWithValue("title", article.getTitle())
+            .hasFieldOrPropertyWithValue("content", article.getContent())
+            .hasFieldOrPropertyWithValue("hashtag", article.getHashtag());
+        then(articleRepository).should().findById(articleId);
+    }
+
+    @DisplayName("댓글 달린 게시글이 없으면, 예외를 던진다")
+    @Test
+    void givenNonexistenceArticleId_whenSearchingArticleWithComments_thenThrowException() {
+        // given
+        Long articleId = 0L;
+        given(articleRepository.findById(articleId)).willReturn(Optional.empty());
+
+        // when
+        Throwable t = catchThrowable(() -> sut.getArticleWithComments(articleId));
+
+        // then
+        assertThat(t)
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("게시글이 없습니다 - articleId: " + articleId);
+        then(articleRepository).should().findById(articleId);
+
+    }
     @DisplayName("게시글을 조회하면, 게시글을 반환한다")
     @Test
     void givenArticleId_whenSearchingArticle_thenReturnsArticle() {
@@ -77,7 +113,7 @@ class ArticleServiceTest {
         given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
 
         // when
-        ArticleWithCommentsDto dto = sut.getArticle(articleId);
+        ArticleDto dto = sut.getArticle(articleId);
 
         // then
         assertThat(dto)
@@ -110,12 +146,14 @@ class ArticleServiceTest {
     void givenArticleInfo_whenSavingArticle_thenSavesArticle() {
         // given
         ArticleDto dto = createArticleDto();
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(articleRepository.save(any(Article.class))).willReturn(createArticle());
 
         // when
         sut.saveArticle(dto);
 
         // then
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleRepository).should().save(any(Article.class));
     }
 
@@ -128,7 +166,7 @@ class ArticleServiceTest {
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
 
         // when
-        sut.updateArticle(dto);
+        sut.updateArticle(dto.id(), dto);
 
         // then
         assertThat(article)
@@ -146,7 +184,7 @@ class ArticleServiceTest {
         given(articleRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
 
         // when
-        sut.updateArticle(dto);
+        sut.updateArticle(dto.id(), dto);
 
         // then
         then(articleRepository).should().getReferenceById(dto.id());
@@ -195,7 +233,7 @@ class ArticleServiceTest {
         then(articleRepository).should().findByHashtag(hashtag, pageable);
     }
 
-    @DisplayName("해시테그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
+    @DisplayName("해시태그를 조회하면, 유니크 해시태그 리스트를 반환한다.")
     @Test
     void givenNothing_whenCalling_thenReturnsHashtags() {
         // given
