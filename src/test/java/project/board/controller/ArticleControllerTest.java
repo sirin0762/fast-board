@@ -216,14 +216,14 @@ class ArticleControllerTest {
         // given
 
         // when & then
-        mvc.perform(get("/article/form"))
+        mvc.perform(get("/articles/form"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
             .andExpect(view().name("articles/form"))
             .andExpect(model().attribute("formStatus", FormStatus.CREATE));
     }
 
-    @DisplayName("[view][GET] 새 게시글 등록 - 정상 호출")
+    @DisplayName("[view][POST] 새 게시글 등록 - 정상 호출")
     @Test
     void givenNewArticleInfo_whenRequesting_thenSavesNewArticle() throws Exception {
         // given
@@ -232,14 +232,14 @@ class ArticleControllerTest {
 
         // when & then
         mvc.perform(
-            post("/article/form")
+            post("/articles/form")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .content(formDataEncoder.encode(articleRequest))
                 .with(csrf())
         )
-            .andExpect(status().isOk())
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/articles"))
-            .andExpect(redirectedUrl("/article"));
+            .andExpect(redirectedUrl("/articles"));
         then(articleService).should().saveArticle(any(ArticleDto.class));
     }
 
@@ -257,7 +257,7 @@ class ArticleControllerTest {
         )
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-            .andExpect(view().name("/articles/form"))
+            .andExpect(view().name("articles/form"))
             .andExpect(model().attribute("article", ArticleResponse.from(dto)))
             .andExpect(model().attribute("formStatus", FormStatus.UPDATE));
         then(articleService).should().getArticle(articleId);
