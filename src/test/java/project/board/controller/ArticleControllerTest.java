@@ -232,11 +232,11 @@ class ArticleControllerTest {
 
         // when & then
         mvc.perform(
-            post("/articles/form")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .content(formDataEncoder.encode(articleRequest))
-                .with(csrf())
-        )
+                post("/articles/form")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .content(formDataEncoder.encode(articleRequest))
+                    .with(csrf())
+            )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/articles"))
             .andExpect(redirectedUrl("/articles"));

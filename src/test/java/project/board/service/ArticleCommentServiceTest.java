@@ -11,6 +11,8 @@ import project.board.domain.ArticleComment;
 import project.board.dto.ArticleCommentDto;
 import project.board.repository.ArticleCommentRepository;
 import project.board.repository.ArticleRepository;
+import project.board.repository.UserAccountRepository;
+
 import static project.board.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -30,6 +32,7 @@ class ArticleCommentServiceTest {
 
     @Mock private ArticleRepository articleRepository;
     @Mock private ArticleCommentRepository articleCommentRepository;
+    @Mock private UserAccountRepository userAccountRepository;
 
     @DisplayName("게시글 ID로 조회하면, 해당하는 댓글 리스트를 반환한다.")
     @Test
@@ -55,6 +58,7 @@ class ArticleCommentServiceTest {
         // given
         ArticleCommentDto dto = createArticleCommentDto("comment");
         given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
 
         // when
@@ -62,6 +66,7 @@ class ArticleCommentServiceTest {
 
         // then
         then(articleRepository).should().getReferenceById(dto.articleId());
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleCommentRepository).should().save(any(ArticleComment.class));
     }
 
@@ -77,6 +82,7 @@ class ArticleCommentServiceTest {
 
         // then
         then(articleRepository).should().getReferenceById(dto.id());
+        then(userAccountRepository).shouldHaveNoInteractions();
         then(articleCommentRepository).shouldHaveNoInteractions();
     }
 
