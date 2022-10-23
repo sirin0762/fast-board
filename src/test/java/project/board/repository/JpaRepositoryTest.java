@@ -4,18 +4,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import project.board.configuration.JpaConfiguration;
 import project.board.domain.Article;
 import project.board.domain.ArticleComment;
 import project.board.domain.UserAccount;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("Jpa 연결 테스트")
-@Import(JpaConfiguration.class)
+@Import(JpaRepositoryTest.TestJpaConfiguration.class)
 @DataJpaTest
 class JpaRepositoryTest {
 
@@ -94,15 +99,15 @@ class JpaRepositoryTest {
         assertThat(articleCommentRepository.count()).isEqualTo(previousArticleCommentCount - deletedCommentsSize);
     }
 
-    @Test
-    @DisplayName("Jpa query Derivation 테스트")
-    void jpaQueryDerivationTest() {
-        Long articleId = 1L;
-        List<ArticleComment> articleComments = articleCommentRepository.findByArticleId(articleId);
 
-        System.out.println("check");
+    @EnableJpaAuditing
+    @TestConfiguration
+    public static class TestJpaConfiguration {
 
-
+        @Bean
+        public AuditorAware<String> auditorAware() {
+            return () -> Optional.of("sirin");
+        }
     }
 
     private ArticleComment createArticleComment(String content) {
