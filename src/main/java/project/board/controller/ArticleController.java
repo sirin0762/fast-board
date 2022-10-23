@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -19,6 +20,7 @@ import project.board.dto.UserAccountDto;
 import project.board.dto.request.ArticleRequest;
 import project.board.dto.response.ArticleResponse;
 import project.board.dto.response.ArticleWithCommentsResponse;
+import project.board.dto.security.UserPrincipal;
 import project.board.service.ArticleService;
 import project.board.service.PaginationService;
 
@@ -84,17 +86,6 @@ public class ArticleController {
         return "articles/form";
     }
 
-    @PostMapping("/form")
-    public String postNewArticle(ArticleRequest articleRequest) {
-        // TODO : 인증정보를 넣어줘야한다.
-        articleService.saveArticle(Objects.requireNonNull(articleRequest.toDto(UserAccountDto.of(
-            "sirin", "asdf1234", "sirin@gmail.com", "sirin", "memo",
-            null, null, null, null
-        ))));
-
-        return "redirect:/articles";
-    }
-
     @GetMapping("/{articleId}/form")
     public String updateArticleForm(@PathVariable Long articleId, ModelMap map) {
         ArticleResponse article = ArticleResponse.from(articleService.getArticle(articleId));
@@ -105,21 +96,33 @@ public class ArticleController {
         return "articles/form";
     }
 
+    @PostMapping("/form")
+    public String postNewArticle(
+        ArticleRequest articleRequest,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        articleService.saveArticle(articleRequest.toDto(principal.toDto()));
+
+        return "redirect:/articles";
+    }
+
     @PostMapping("/{articleId}/form")
-    public String updateArticle(@PathVariable Long articleId, ArticleRequest articleRequest) {
-        // TODO : 인증 정보를 보내줘야한다.
-        articleService.updateArticle(articleId, Objects.requireNonNull(articleRequest.toDto(UserAccountDto.of(
-            "sirin", "asdf1234", "sirin@gmail.com", "sirin", "memo",
-            null, null, null, null
-        ))));
+    public String updateArticle(
+        @PathVariable Long articleId,
+        @AuthenticationPrincipal UserPrincipal principal,
+        ArticleRequest articleRequest
+    ) {
+        articleService.updateArticle(articleId, articleRequest.toDto(principal.toDto()));
 
         return "redirect:/articles/" + articleId;
     }
 
     @PostMapping("/{articleId}/delete")
-    public String deleteArticle(@PathVariable Long articleId) {
-        // TODO : 인증 정보를 보내줘야한다.
-        articleService.deleteArticle(articleId);
+    public String deleteArticle(
+        @PathVariable Long articleId,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        articleService.deleteArticle(articleId, principal.username());
 
         return "redirect:/articles";
     }
