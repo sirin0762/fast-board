@@ -15,6 +15,7 @@ import project.board.repository.ArticleRepository;
 import project.board.repository.UserAccountRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.MessageFormat;
 import java.util.List;
 
 @Slf4j
@@ -77,6 +78,10 @@ public class ArticleService {
     public void updateArticle(Long articleId, ArticleDto dto) {
         try {
             Article article = articleRepository.getReferenceById(articleId);
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            if (!article.getUserAccount().equals(userAccount)) {
+                throw new SecurityException(MessageFormat.format("게시글 업데이트 실패, 해당 게시글 수정 권한이 없는 유저입니다. dto: {}", dto));
+            }
             if (dto.title() != null) article.setTitle(dto.title());
             if (dto.content() != null) article.setContent(dto.content());
             article.setHashtag(dto.hashtag());
@@ -85,8 +90,8 @@ public class ArticleService {
         }
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
 }
