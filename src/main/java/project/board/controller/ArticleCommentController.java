@@ -1,12 +1,14 @@
 package project.board.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import project.board.dto.UserAccountDto;
 import project.board.dto.request.ArticleCommentRequest;
+import project.board.dto.security.UserPrincipal;
 import project.board.service.ArticleCommentService;
 
 @RequiredArgsConstructor
@@ -17,19 +19,22 @@ public class ArticleCommentController {
     private final ArticleCommentService articleCommentService;
 
     @PostMapping("/new")
-    public String postNewArticleComment(ArticleCommentRequest articleCommentRequest) {
-        // TODO : 인증 정보를 넣어줘야한다.
-        articleCommentService.saveArticleComment(articleCommentRequest.toDto(
-            UserAccountDto.of("sirin", "pw", "email@gmail.com", "nickname", "meno")
-        ));
+    public String postNewArticleComment(
+        ArticleCommentRequest articleCommentRequest,
+        @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        articleCommentService.saveArticleComment(articleCommentRequest.toDto(principal.toDto()));
 
         return "redirect:/articles/" + articleCommentRequest.articleId();
     }
 
     @PostMapping("/{commentId}/delete")
-    public String deleteArticleComment(@PathVariable Long commentId, Long articleId) {
-        // TODO : 인증 정보를 보내줘야한다.
-        articleCommentService.deleteArticleComment(commentId);
+    public String deleteArticleComment(
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal UserPrincipal userPrincipal,
+        Long articleId
+    ) {
+        articleCommentService.deleteArticleComment(commentId, userPrincipal.username());
 
         return "redirect:/articles/" + articleId;
     }
