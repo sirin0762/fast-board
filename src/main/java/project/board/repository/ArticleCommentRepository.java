@@ -11,6 +11,7 @@ import project.board.domain.ArticleComment;
 import project.board.domain.QArticleComment;
 
 import java.util.List;
+import java.util.Optional;
 
 @RepositoryRestResource
 public interface ArticleCommentRepository extends
@@ -19,6 +20,7 @@ public interface ArticleCommentRepository extends
     QuerydslBinderCustomizer<QArticleComment> {
 
     List<ArticleComment> findByArticleId(Long articleId);
+    void deleteByIdAndUserAccount_UserId(Long commentId, String userId);
 
     @Override
     default void customize(QuerydslBindings bindings, QArticleComment root) {
