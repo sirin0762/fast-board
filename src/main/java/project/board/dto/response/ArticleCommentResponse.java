@@ -9,12 +9,13 @@ public record ArticleCommentResponse(
     Long id,
     String content,
     LocalDateTime createdAt,
+    String userId,
     String email,
     String nickname
 ) implements Serializable {
 
-    public static ArticleCommentResponse of(Long id, String content, LocalDateTime createdAt, String email, String nickname) {
-        return new ArticleCommentResponse(id, content, createdAt, email, nickname);
+    public static ArticleCommentResponse of(Long id, String content, String userId, LocalDateTime createdAt, String email, String nickname) {
+        return new ArticleCommentResponse(id, content,  createdAt, userId, email, nickname);
     }
 
     public static ArticleCommentResponse from(ArticleCommentDto dto) {
@@ -27,6 +28,7 @@ public record ArticleCommentResponse(
             dto.id(),
             dto.content(),
             dto.createdAt(),
+            dto.userAccountDto().userId(),
             dto.userAccountDto().email(),
             nickname
         );
