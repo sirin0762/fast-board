@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import project.board.domain.Article;
 import project.board.domain.type.SearchType;
 import project.board.dto.ArticleDto;
@@ -17,6 +19,9 @@ import project.board.repository.UserAccountRepository;
 import static project.board.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,7 +144,6 @@ class ArticleServiceTest {
             .hasMessage("게시글이 없습니다 - articleId: " + articleId);
         then(articleRepository).should().findById(articleId);
     }
-
 
     @DisplayName("게시글 정보를 입력하면, 게시글을 생성한다.")
     @Test

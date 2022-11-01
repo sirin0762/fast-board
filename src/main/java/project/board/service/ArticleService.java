@@ -11,18 +11,27 @@ import project.board.domain.UserAccount;
 import project.board.domain.type.SearchType;
 import project.board.dto.ArticleDto;
 import project.board.dto.ArticleWithCommentsDto;
+import project.board.dto.response.PopularArticleResponse;
 import project.board.repository.ArticleRepository;
 import project.board.repository.UserAccountRepository;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ArticleService {
+
+    private final String VIEW_COOKIE_NAME = "alreadyViewCookie";
+    private final int EXPIRE_VIEW_COOKIE_SECONDS = 60 * 60 * 24;
 
     private final ArticleRepository articleRepository;
     private final UserAccountRepository userAccountRepository;
@@ -90,8 +99,41 @@ public class ArticleService {
         }
     }
 
+    public Set<PopularArticleResponse> getPopularArticles(String hashtag) {
+        return articleRepository.findTop2ByHashtagOrderByViewCountDesc(hashtag)
+            .stream().map(PopularArticleResponse::from)
+            .collect(Collectors.toSet());
+    }
+
     public void deleteArticle(long articleId, String userId) {
         articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
+    }
+
+    public void addViewCount(Long articleId, HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null || !isRequestContainViewCookie(request, articleId)) {
+            Cookie cookie = createViewCookie(articleId);
+            response.addCookie(cookie);
+            articleRepository.findById(articleId).orElseThrow(
+                () -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId)
+            ).addViewCount();
+        }
+    }
+
+    private boolean isRequestContainViewCookie(HttpServletRequest request, Long articleId) {
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals(VIEW_COOKIE_NAME + articleId)) return true;
+        }
+        return false;
+    }
+
+    private Cookie createViewCookie(Long articleId) {
+        Cookie cookie = new Cookie(VIEW_COOKIE_NAME + articleId, String.valueOf(articleId));
+        cookie.setComment("조회수 중복 증가 방지 쿠키");
+        cookie.setMaxAge(EXPIRE_VIEW_COOKIE_SECONDS);
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 
 }
