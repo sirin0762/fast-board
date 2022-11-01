@@ -5,7 +5,7 @@
 
     <attr sel="#main-content" th:object="${article}">
         <attr sel = "#article-header">
-            <attr sel="h3/a" th:text="${article.title}"/>
+            <attr sel="h3" th:text="${article.title}"/>
             <attr sel="p" th:text="${article.content}"/>
             <attr sel="td.user-id" th:text="${article.nickname}"/>
             <attr sel="td.created-at/time" th:datetime="${article.createdAt}" th:text="${#temporals.format(article.createdAt, 'yyyy-mm-dd')}"/>
@@ -32,6 +32,13 @@
                         <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${articleComment.userId} == ${#authentication.name}"/>
                     </attr>
                 </attr>
+            </attr>
+        </attr>
+
+        <attr sel=".popular-article-container" th:remove="all-but-first">
+            <attr sel=".popular-article" th:each="popularArticle : ${popularArticles}">
+                <attr sel="a" th:href="@{'/articles/' + ${popularArticle.id}}" th:text="${popularArticle.title}"/>
+                <attr sel="p" th:text="${#temporals.format(popularArticle.createdAt, 'yyyy-mm-dd')}"/>
             </attr>
         </attr>
 
