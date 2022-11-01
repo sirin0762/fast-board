@@ -1,6 +1,5 @@
 package project.board.controller;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import project.board.config.TestSecurityConfig;
-import project.board.configuration.SecurityConfiguration;
 import project.board.domain.type.FormStatus;
 import project.board.domain.type.SearchType;
 import project.board.dto.ArticleDto;
@@ -26,25 +24,27 @@ import project.board.service.ArticleService;
 import project.board.service.PaginationService;
 import project.board.util.FormDataEncoder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
-import static project.board.Fixture.*;
-
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static project.board.Fixture.createArticleDto;
+import static project.board.Fixture.createArticleWithCommentDto;
 
 
 @DisplayName("View 컨트롤러 - 게시글")
@@ -142,6 +142,8 @@ class ArticleControllerTest {
         // given
         Long articleId = 1L;
         given(articleService.getArticleWithComments(articleId)).willReturn(createArticleWithCommentDto());
+        willDoNothing().given(articleService).addViewCount(eq(articleId), any(HttpServletRequest.class), any(HttpServletResponse.class));
+
         // when & then
         mvc.perform(get("/articles/" + articleId))
             .andExpect(status().isOk())
@@ -150,6 +152,8 @@ class ArticleControllerTest {
             .andExpect(model().attributeExists("article"))
             .andExpect(model().attributeExists("articleComments"));
         then(articleService).should().getArticleWithComments(articleId);
+        then(articleService).should().addViewCount(eq(articleId), any(HttpServletRequest.class), any(HttpServletResponse.class));
+
     }
 
     @DisplayName("[view][GET] 게시글 상세 페이지 - 인증 안된 로그인 페이지로 이동")

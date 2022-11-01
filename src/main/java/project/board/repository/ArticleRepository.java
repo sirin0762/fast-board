@@ -14,6 +14,7 @@ import project.board.domain.QArticle;
 import project.board.repository.querydsl.ArticleRepositoryCustom;
 
 import java.util.List;
+import java.util.Set;
 
 @RepositoryRestResource
 public interface ArticleRepository extends
@@ -28,6 +29,7 @@ public interface ArticleRepository extends
     Page<Article> findByUserAccount_UserIdContaining(String title, Pageable pageable);
     Page<Article> findByUserAccount_NicknameContaining(String title, Pageable pageable);
     Page<Article> findByHashtag(String hashtag, Pageable pageable);
+    Set<Article> findTop2ByHashtagOrderByViewCountDesc(String hashtag);
 
     void deleteByIdAndUserAccount_UserId(Long articleId, String userId);
 

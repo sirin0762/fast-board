@@ -20,12 +20,16 @@ import project.board.dto.UserAccountDto;
 import project.board.dto.request.ArticleRequest;
 import project.board.dto.response.ArticleResponse;
 import project.board.dto.response.ArticleWithCommentsResponse;
+import project.board.dto.response.PopularArticleResponse;
 import project.board.dto.security.UserPrincipal;
 import project.board.service.ArticleService;
 import project.board.service.PaginationService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Controller
@@ -53,10 +57,20 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    public String article(@PathVariable Long articleId, ModelMap map) {
+    public String article(
+        @PathVariable Long articleId,
+        ModelMap map,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
         ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticleWithComments(articleId));
+        Set<PopularArticleResponse> popularArticles = articleService.getPopularArticles(article.hashtag());
+
+        articleService.addViewCount(articleId, request, response);
+
         map.addAttribute("article", article);
         map.addAttribute("articleComments", article.articleCommentsResponses());
+        map.addAttribute("popularArticles", popularArticles);
         return "articles/detail";
     }
 

@@ -43,6 +43,9 @@ public class Article extends BaseEntity{
     @Setter @Column(length = 255)
     private String hashtag;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int viewCount;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     @OrderBy("id")
@@ -76,6 +79,10 @@ public class Article extends BaseEntity{
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void addViewCount() {
+        this.viewCount += 1;
     }
 
 }
