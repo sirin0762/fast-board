@@ -6,14 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import project.board.Fixture;
 import project.board.domain.ArticleComment;
 import project.board.dto.ArticleCommentDto;
 import project.board.repository.ArticleCommentRepository;
 import project.board.repository.ArticleRepository;
 import project.board.repository.UserAccountRepository;
 
-import static project.board.Fixture.*;
+import static project.board.util.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;

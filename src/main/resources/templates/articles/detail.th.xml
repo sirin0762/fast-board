@@ -5,10 +5,11 @@
 
     <attr sel="#main-content" th:object="${article}">
         <attr sel = "#article-header">
+            <attr sel=".img-post/img" th:src="${article.imagePath}" alt='' th:onerror="this.style.display='none'"/>
             <attr sel="h3" th:text="${article.title}"/>
             <attr sel="p" th:text="${article.content}"/>
             <attr sel="td.user-id" th:text="${article.nickname}"/>
-            <attr sel="td.created-at/time" th:datetime="${article.createdAt}" th:text="${#temporals.format(article.createdAt, 'yyyy-mm-dd')}"/>
+            <attr sel="td.created-at/time" th:datetime="${article.createdAt}" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"/>
 
             <attr sel="#article-buttons" th:if="${#authorization.expression('isAuthenticated()')} and *{userId} == ${#authentication.name}">
                 <attr sel="#update-article-btn" th:href="'/articles/' + *{id} + '/form'" />
@@ -27,7 +28,7 @@
                 <attr sel="/li[0]" th:each="articleComment : ${articleComments}">
                     <attr sel="h5" th:text="${articleComment.nickname}"/>
                     <attr sel="#comment-content" th:text="${articleComment.content}"/>
-                    <attr sel="#comment-created-at" th:text="${#temporals.format(articleComment.createdAt, 'yyyy-mm-dd')}"/>
+                    <attr sel="#comment-created-at" th:text="${#temporals.format(articleComment.createdAt, 'yyyy-MM-dd')}"/>
                     <attr sel="#delete-comment-form" th:action="@{'/comments/' + ${articleComment.id} + '/delete'}" th:method="post">
                         <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${articleComment.userId} == ${#authentication.name}"/>
                     </attr>
@@ -38,13 +39,14 @@
         <attr sel=".popular-article-container" th:remove="all-but-first">
             <attr sel=".popular-article" th:each="popularArticle : ${popularArticles}">
                 <attr sel="a" th:href="@{'/articles/' + ${popularArticle.id}}" th:text="${popularArticle.title}"/>
-                <attr sel="p" th:text="${#temporals.format(popularArticle.createdAt, 'yyyy-mm-dd')}"/>
+                <attr sel="p" th:text="${#temporals.format(popularArticle.createdAt, 'yyyy-MM-dd')}"/>
+                <attr sel=".img-article/img" th:src="${popularArticle.imagePath}" alt='' th:onerror="this.style.display='none'"/>
             </attr>
         </attr>
 
         <attr sel="#nickname" th:text="*{nickname}"/>
         <attr sel="#email" th:text="*{email}"/>
-        <attr sel="#created-at" th:text="${#temporals.format(article.createdAt, 'yyyy-mm-dd')}"/>
+        <attr sel="#created-at" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"/>
         <attr sel="#hashtag" th:text="*{hashtag}"/>
     </attr>
 

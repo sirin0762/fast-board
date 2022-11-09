@@ -8,20 +8,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import project.board.domain.Article;
 import project.board.domain.type.SearchType;
 import project.board.dto.ArticleDto;
 import project.board.dto.ArticleWithCommentsDto;
 import project.board.repository.ArticleRepository;
 import project.board.repository.UserAccountRepository;
-import static project.board.Fixture.*;
+import static project.board.util.Fixture.*;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 

@@ -79,9 +79,10 @@ public class ArticleService {
         return articleRepository.findAllDistinctHashtags();
     }
 
-    public void saveArticle(ArticleDto dto) {
+    public Long saveArticle(ArticleDto dto) {
         UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
-        articleRepository.save(dto.toEntity(userAccount));
+        Article article = articleRepository.save(dto.toEntity(userAccount));
+        return article.getId();
     }
 
     public void updateArticle(Long articleId, ArticleDto dto) {
@@ -134,6 +135,13 @@ public class ArticleService {
         cookie.setMaxAge(EXPIRE_VIEW_COOKIE_SECONDS);
         cookie.setHttpOnly(true);
         return cookie;
+    }
+
+    public void saveBoardImage(Long articleId, String imagePath) {
+        Article article = articleRepository.findById(articleId).orElseThrow(
+            () -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId));
+
+        article.setImagePath(imagePath);
     }
 
 }

@@ -46,6 +46,9 @@ public class Article extends BaseEntity{
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int viewCount;
 
+    @Column @Setter
+    private String imagePath;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     @OrderBy("id")

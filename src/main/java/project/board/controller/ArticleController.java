@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import project.board.common.S3Uploader;
 import project.board.domain.type.FormStatus;
 import project.board.domain.type.SearchType;
-import project.board.dto.UserAccountDto;
 import project.board.dto.request.ArticleRequest;
 import project.board.dto.response.ArticleResponse;
 import project.board.dto.response.ArticleWithCommentsResponse;
@@ -27,6 +27,7 @@ import project.board.service.PaginationService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -38,6 +39,9 @@ public class ArticleController {
 
     private final ArticleService articleService;
     private final PaginationService paginationService;
+    private final S3Uploader s3Uploader;
+
+    public final String BOARD_DIRNAME = "board";
 
     @GetMapping
     public String articles(
@@ -67,10 +71,10 @@ public class ArticleController {
         Set<PopularArticleResponse> popularArticles = articleService.getPopularArticles(article.hashtag());
 
         articleService.addViewCount(articleId, request, response);
-
         map.addAttribute("article", article);
         map.addAttribute("articleComments", article.articleCommentsResponses());
         map.addAttribute("popularArticles", popularArticles);
+
         return "articles/detail";
     }
 
@@ -113,9 +117,15 @@ public class ArticleController {
     @PostMapping("/form")
     public String postNewArticle(
         ArticleRequest articleRequest,
-        @AuthenticationPrincipal UserPrincipal principal
-    ) {
-        articleService.saveArticle(articleRequest.toDto(principal.toDto()));
+        @AuthenticationPrincipal UserPrincipal principal,
+        @RequestParam(name = "file", required = false) MultipartFile file
+    ) throws IOException {
+        Long articleId = articleService.saveArticle(articleRequest.toDto(principal.toDto()));
+
+        if (!Objects.isNull(file)) {
+            String imagePath = s3Uploader.upload(file, BOARD_DIRNAME);
+            articleService.saveBoardImage(articleId, imagePath);
+        }
 
         return "redirect:/articles";
     }
