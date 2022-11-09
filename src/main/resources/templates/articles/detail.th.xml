@@ -44,6 +44,8 @@
             </attr>
         </attr>
 
+        <attr sel="#search-form" th:action="@{/articles}" th:method="get"/>
+
         <attr sel="#nickname" th:text="*{nickname}"/>
         <attr sel="#email" th:text="*{email}"/>
         <attr sel="#created-at" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"/>
