@@ -172,7 +172,7 @@ class ArticleServiceTest {
         assertThat(article)
             .hasFieldOrPropertyWithValue("title", dto.title())
             .hasFieldOrPropertyWithValue("content", dto.content())
-            .hasFieldOrPropertyWithValue("hashtag", dto.hashtag());
+            .hasFieldOrPropertyWithValue("hashtag", "#" + dto.hashtag());
         then(articleRepository).should().getReferenceById(dto.id());
         then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
     }

@@ -40,7 +40,7 @@ public class Article extends BaseEntity{
     @Setter @Column(nullable = false, length = 10_000)
     private String content;
 
-    @Setter @Column(length = 255)
+    @Column(length = 255)
     private String hashtag;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
@@ -88,4 +88,7 @@ public class Article extends BaseEntity{
         this.viewCount += 1;
     }
 
+    public void setHashtag(String hashtag) {
+        this.hashtag = hashtag.startsWith("#") ? hashtag : "#" + hashtag;
+    }
 }
