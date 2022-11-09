@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+import project.board.common.S3Uploader;
 import project.board.config.TestSecurityConfig;
 import project.board.domain.type.FormStatus;
 import project.board.domain.type.SearchType;
@@ -43,8 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static project.board.Fixture.createArticleDto;
-import static project.board.Fixture.createArticleWithCommentDto;
+import static project.board.util.Fixture.createArticleDto;
+import static project.board.util.Fixture.createArticleWithCommentDto;
 
 
 @DisplayName("View 컨트롤러 - 게시글")
@@ -57,6 +58,7 @@ class ArticleControllerTest {
 
     @MockBean private ArticleService articleService;
     @MockBean private PaginationService paginationService;
+    @MockBean private S3Uploader s3Uploader;
 
     public ArticleControllerTest(@Autowired MockMvc mvc, @Autowired FormDataEncoder formDataEncoder) {
         this.mvc = mvc;
@@ -238,8 +240,9 @@ class ArticleControllerTest {
     @Test
     void givenNewArticleInfo_whenRequesting_thenSavesNewArticle() throws Exception {
         // given
+        Long articleId = 1L;
         ArticleRequest articleRequest = ArticleRequest.of("new title", "new content", "#new");
-        willDoNothing().given(articleService).saveArticle(any(ArticleDto.class));
+        given(articleService.saveArticle(any(ArticleDto.class))).willReturn(articleId);
 
         // when & then
         mvc.perform(

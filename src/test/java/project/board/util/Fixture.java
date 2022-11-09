@@ -1,4 +1,4 @@
-package project.board;
+package project.board.util;
 
 import org.springframework.test.util.ReflectionTestUtils;
 import project.board.domain.Article;
@@ -97,6 +97,7 @@ public class Fixture {
             "title",
             "content",
             "hashtag",
+            "",
             LocalDateTime.now(),
             "sirin",
             LocalDateTime.now(),
