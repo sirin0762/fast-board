@@ -64,7 +64,7 @@ public class Article extends BaseEntity{
         this.userAccount = userAccount;
         this.title = title;
         this.content = content;
-        this.hashtag = hashtag;
+        setHashtag(hashtag);
     }
 
     public static Article of(UserAccount userAccount, String title, String content, String hashtag) {
