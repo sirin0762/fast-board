@@ -122,7 +122,7 @@ public class ArticleController {
     ) throws IOException {
         Long articleId = articleService.saveArticle(articleRequest.toDto(principal.toDto()));
 
-        if (Objects.requireNonNull(file.getContentType()).toLowerCase().startsWith("image")) {
+        if (!Objects.isNull(file) && Objects.requireNonNull(file.getContentType()).toLowerCase().startsWith("image")) {
             String imagePath = s3Uploader.upload(file, BOARD_DIRNAME);
             articleService.saveBoardImage(articleId, imagePath);
         }
@@ -139,7 +139,7 @@ public class ArticleController {
     ) throws IOException {
         articleService.updateArticle(articleId, articleRequest.toDto(principal.toDto()));
 
-        if (Objects.requireNonNull(file.getContentType()).toLowerCase().startsWith("image")) {
+        if (!Objects.isNull(file) && Objects.requireNonNull(file.getContentType()).toLowerCase().startsWith("image")) {
             String imagePath = s3Uploader.upload(file, BOARD_DIRNAME);
             articleService.saveBoardImage(articleId, imagePath);
         }
