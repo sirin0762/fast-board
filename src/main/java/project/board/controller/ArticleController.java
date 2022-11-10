@@ -134,9 +134,15 @@ public class ArticleController {
     public String updateArticle(
         @PathVariable Long articleId,
         @AuthenticationPrincipal UserPrincipal principal,
+        @RequestParam(name = "file", required = false) MultipartFile file,
         ArticleRequest articleRequest
-    ) {
+    ) throws IOException {
         articleService.updateArticle(articleId, articleRequest.toDto(principal.toDto()));
+
+        if (Objects.requireNonNull(file.getContentType()).toLowerCase().startsWith("image")) {
+            String imagePath = s3Uploader.upload(file, BOARD_DIRNAME);
+            articleService.saveBoardImage(articleId, imagePath);
+        }
 
         return "redirect:/articles/" + articleId;
     }
