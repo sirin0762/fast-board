@@ -7,7 +7,7 @@
         <attr sel = "#article-header">
             <attr sel=".img-post/img" th:src="${article.imagePath}" alt='' th:onerror="this.style.display='none'"/>
             <attr sel="h3" th:text="${article.title}"/>
-            <attr sel="p" th:text="${article.content}"/>
+            <attr sel="span" th:text="${article.content}"/>
             <attr sel="td.user-id" th:text="${article.nickname}"/>
             <attr sel="td.created-at/time" th:datetime="${article.createdAt}" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}"/>
 
