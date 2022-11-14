@@ -34,5 +34,26 @@ spring:
   thymeleaf3:
     decoupled-logic: true
 
+---
 
+spring:
+  config:
+    activate:
+      on-profile: heroku
+  datasource:
+    url: ${JAWSDB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa.hibernate.ddl-auto: create
+  sql.init.mode: always
 
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    s3:
+      bucket: yogijogi
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
