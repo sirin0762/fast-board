@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import project.board.common.auth.LoginSuccessHandler;
 import project.board.dto.UserAccountDto;
 import project.board.dto.security.UserPrincipal;
 import project.board.repository.UserAccountRepository;
@@ -22,17 +23,22 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+            .csrf().disable()
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .mvcMatchers(
                     HttpMethod.GET,
                     "/",
                     "/articles",
-                    "/articles/search-hashtag"
+                    "/articles/search-hashtag",
+                    "/login"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/")
+                .successHandler(new LoginSuccessHandler())
                 .and()
             .logout()
                 .logoutSuccessUrl("/")

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<thlogic>
+    <attr sel="#header" th:replace="component/header :: header"/>
+    <attr sel="#footer" th:replace="component/footer :: footer"/>
+
+    <attr sel=".form-signin" th:action="@{/login}"/>
+
+</thlogic>
