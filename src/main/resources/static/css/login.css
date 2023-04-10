@@ -79,9 +79,14 @@
 .social_login_container {
     display: flex;
     justify-content: space-around;
+    align-items: center;
+}
+
+.social_login_container a {
+    width: 45%;
 }
 
 .social_login_container img {
-    width: 45%;
+    width: 100%;
     object-fit: fill;
 }

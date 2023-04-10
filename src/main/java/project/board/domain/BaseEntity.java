@@ -24,7 +24,7 @@ public abstract class BaseEntity {
     private LocalDateTime createdAt;
 
     @CreatedBy
-    @Column(nullable = false, length = 100, updatable = false)
+    @Column(nullable = true, length = 100, updatable = false)
     private String createdBy;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

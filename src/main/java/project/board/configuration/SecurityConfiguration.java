@@ -9,16 +9,24 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import project.board.common.auth.LoginSuccessHandler;
+import project.board.common.auth.PrincipalOAuth2UserService;
 import project.board.dto.UserAccountDto;
 import project.board.dto.security.UserPrincipal;
 import project.board.repository.UserAccountRepository;
 
 @Configuration
 public class SecurityConfiguration {
+
+    private final UserAccountRepository userAccountRepository;
+
+    public SecurityConfiguration(UserAccountRepository userAccountRepository) {
+        this.userAccountRepository = userAccountRepository;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,6 +47,12 @@ public class SecurityConfiguration {
                 .loginPage("/login")
                 .defaultSuccessUrl("/")
                 .successHandler(new LoginSuccessHandler())
+                .and()
+            .oauth2Login()
+                .loginPage("/login")
+                .userInfoEndpoint()
+                    .userService(new PrincipalOAuth2UserService(userAccountRepository))
+                    .and()
                 .and()
             .logout()
                 .logoutSuccessUrl("/")
