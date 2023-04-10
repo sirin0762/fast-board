@@ -17,11 +17,17 @@ public class JpaConfiguration {
 
     @Bean
     public AuditorAware<String> auditorAware() {
-        return () -> Optional.ofNullable(SecurityContextHolder.getContext())
-            .map(SecurityContext::getAuthentication)
-            .filter(Authentication::isAuthenticated)
-            .map(Authentication::getPrincipal)
-            .map(UserPrincipal.class::cast)
-            .map(UserPrincipal::getUsername);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (null == authentication || !authentication.isAuthenticated()) {
+            return null;
+        }
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        return () -> Optional.of("this");
+//        return () -> Optional.ofNullable(SecurityContextHolder.getContext())
+//            .map(SecurityContext::getAuthentication)
+//            .filter(Authentication::isAuthenticated)
+//            .map(Authentication::getPrincipal)
+//            .map(UserPrincipal.class::cast)
+//            .map(UserPrincipal::getUsername);
    }
 }
