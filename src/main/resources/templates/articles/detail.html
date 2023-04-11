@@ -63,13 +63,30 @@
                                 <li class="row clearfix">
                                     <div class="icon-box col-md-2 col-4"><img class="img-fluid img-thumbnail" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Awesome Image"></div>
                                     <div class="text-box col-md-10 col-8 p-l-0 p-r0">
-                                        <h5 class="m-b-0">Gigi Hadid </h5>
-                                        <p id="comment-content">Why are there so many tutorials on how to decouple WordPress? how fast and easy it is to get it running (and keep it running!) and its massive ecosystem. </p>
                                         <div class="d-flex justify-content-between">
+                                            <h5 class="m-b-0">Gigi Hadid </h5>
                                             <small><time id="comment-created-at">2022-01-01</time></small>
+                                        </div>
+                                        <p id="comment-content">Why are there so many tutorials on how to decouple WordPress? how fast and easy it is to get it running (and keep it running!) and its massive ecosystem. </p>
+                                        <div class="d-flex justify-content-end gap-1 mb-2">
+                                            <button id="reply-button" type="button" class="btn btn-outline-primary btn-sm">Reply</button>
                                             <form id="delete-comment-form">
                                                 <input type="hidden" class="article-id">
-                                                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                        <div class="collapse" th:id="r + ${articleComment.id}">
+
+                                        </div>
+                                        <div class="collapse" th:id="r + ${articleComment.id}">
+                                            <form id="comment-reply-form" method="post">
+                                                <div class="input-group" style="width:100%">
+                                                    <input type="text" class="form-control" placeholder="댓글 쓰기.." required>
+                                                    <label for="content" class="form-label mt-4" hidden>댓글 작성</label>
+                                                    <button type="submit" class="btn btn-outline-dark">답글작성</button>
+                                                    <br>
+                                                </div>
+                                                <br>
                                             </form>
                                         </div>
                                     </div>
