@@ -29,6 +29,10 @@
                     <attr sel="h5" th:text="${articleComment.nickname}"/>
                     <attr sel="#comment-content" th:text="${articleComment.content}"/>
                     <attr sel="#comment-created-at" th:text="${#temporals.format(articleComment.createdAt, 'yyyy-MM-dd')}"/>
+                    <attr sel="#reply-button" sec:authorization="isAuthenticated()" data-bs-toggle="collapse" th:attr="data-bs-target=|#r${articleComment.id}"/>
+                    <attr sel="#comment-reply-form" sec:authorize="isAuthenticated()"  th:action="@{|/comments/${articleComment.id}/reply|}" th:object="${dto}">
+                        <attr sel="input" th:name="content"/>
+                    </attr>
                     <attr sel="#delete-comment-form" th:action="@{'/comments/' + ${articleComment.id} + '/delete'}" th:method="post">
                         <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${articleComment.userId} == ${#authentication.name}"/>
                     </attr>
