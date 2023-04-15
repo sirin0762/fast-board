@@ -68,7 +68,7 @@
                                             <small><time id="comment-created-at">2022-01-01</time></small>
                                         </div>
                                         <p id="comment-content">Why are there so many tutorials on how to decouple WordPress? how fast and easy it is to get it running (and keep it running!) and its massive ecosystem. </p>
-                                        <div class="d-flex justify-content-end gap-1 mb-2">
+                                        <div class="d-flex justify-content-end gap-1 mb-3">
                                             <button id="reply-button" type="button" class="btn btn-outline-primary btn-sm">Reply</button>
                                             <form id="delete-comment-form">
                                                 <input type="hidden" class="article-id">
@@ -76,7 +76,11 @@
                                             </form>
                                         </div>
                                         <div class="collapse" th:id="r + ${articleComment.id}">
-
+                                            <div id="comment-reply" class="d-flex align-items-center gap-1 border-bottom rounded p-sm-1">
+                                                <img src="/images/reply_direction.png" alt=""/>
+                                                <h6 class="bold m-0">Sirin</h6>
+                                                <p>lorem ipsum</p>
+                                            </div>
                                         </div>
                                         <div class="collapse" th:id="r + ${articleComment.id}">
                                             <form id="comment-reply-form" method="post">

@@ -33,6 +33,10 @@
                     <attr sel="#comment-reply-form" sec:authorize="isAuthenticated()"  th:action="@{|/comments/${articleComment.id}/reply|}" th:object="${dto}">
                         <attr sel="input" th:name="content"/>
                     </attr>
+<!--                    <attr sel="#comment-reply" th:each="reply : ${articleComment.getReplys()}">-->
+<!--                        <attr sel="h6" th:text="reply.username"/>-->
+<!--                        <attr sel="p" th:text="reply.content"/>-->
+<!--                    </attr>-->
                     <attr sel="#delete-comment-form" th:action="@{'/comments/' + ${articleComment.id} + '/delete'}" th:method="post">
                         <attr sel="button" th:if="${#authorization.expression('isAuthenticated()')} and ${articleComment.userId} == ${#authentication.name}"/>
                     </attr>
