@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.userdetails.User;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,8 +14,12 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @ToString(callSuper = true)
@@ -38,6 +43,11 @@ public class ArticleComment extends BaseEntity{
     @Setter @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private UserAccount userAccount;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "articleComment", cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private final Set<CommentReply> commentReplies = new LinkedHashSet<>();
 
     protected ArticleComment() {}
 

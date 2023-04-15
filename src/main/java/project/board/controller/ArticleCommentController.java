@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import project.board.dto.CommentReplyDto;
+import project.board.dto.CommentReplyRequest;
 import project.board.dto.UserAccountDto;
 import project.board.dto.request.ArticleCommentRequest;
 import project.board.dto.security.UserPrincipal;
@@ -36,6 +38,17 @@ public class ArticleCommentController {
     ) {
         articleCommentService.deleteArticleComment(commentId, userPrincipal.username());
 
+        return "redirect:/articles/" + articleId;
+    }
+
+    @PostMapping("/{commentId}/reply")
+    public String postNewCommentReply(
+        CommentReplyRequest commentReplyRequest,
+        @PathVariable Long commentId,
+        @AuthenticationPrincipal UserPrincipal principal,
+        Long articleId
+    ) {
+        articleCommentService.saveArticleCommentRely(commentReplyRequest.toDto(commentId, principal.toDto()));
         return "redirect:/articles/" + articleId;
     }
 
