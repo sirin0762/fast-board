@@ -85,8 +85,8 @@
                                         <div class="collapse" th:id="r + ${articleComment.id}">
                                             <form id="comment-reply-form" method="post">
                                                 <div class="input-group" style="width:100%">
-                                                    <input type="text" class="form-control" placeholder="댓글 쓰기.." required>
-                                                    <label for="content" class="form-label mt-4" hidden>댓글 작성</label>
+                                                    <input id="comment-reply-content" type="text" class="form-control" placeholder="댓글 쓰기.." required>
+                                                    <input type="hidden" class="article-id">
                                                     <button type="submit" class="btn btn-outline-dark">답글작성</button>
                                                     <br>
                                                 </div>
