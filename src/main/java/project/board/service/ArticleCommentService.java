@@ -8,8 +8,10 @@ import project.board.domain.Article;
 import project.board.domain.ArticleComment;
 import project.board.domain.UserAccount;
 import project.board.dto.ArticleCommentDto;
+import project.board.dto.CommentReplyDto;
 import project.board.repository.ArticleCommentRepository;
 import project.board.repository.ArticleRepository;
+import project.board.repository.CommentReplyRepository;
 import project.board.repository.UserAccountRepository;
 
 import javax.persistence.EntityNotFoundException;
@@ -24,6 +26,7 @@ public class ArticleCommentService {
     private final ArticleRepository articleRepository;
     private final UserAccountRepository userAccountRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final CommentReplyRepository commentReplyRepository;
 
     @Transactional(readOnly = true)
     public List<ArticleCommentDto> searchArticleComments(long articleId) {
@@ -54,6 +57,17 @@ public class ArticleCommentService {
 
     public void deleteArticleComment(Long articleCommentId, String userId) {
         articleCommentRepository.deleteByIdAndUserAccount_UserId(articleCommentId, userId);
+    }
+
+    public void saveArticleCommentRely(CommentReplyDto dto) {
+        try {
+            ArticleComment articleComment = articleCommentRepository.getReferenceById(dto.commentId());
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+            commentReplyRepository.save(dto.toEntity(articleComment, userAccount));
+        } catch (EntityNotFoundException e) {
+            log.warn("대댓글 업데이트 실패. 정보를 찾을 수 없습니다 - dto: {}", dto);
+        }
+
     }
 
 }
