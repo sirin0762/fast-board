@@ -10,6 +10,7 @@ import project.board.dto.ArticleWithCommentsDto;
 import project.board.dto.UserAccountDto;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Fixture {
@@ -20,6 +21,7 @@ public class Fixture {
             1L,
             createUserAccountDto(),
             content,
+            new LinkedHashSet<>(),
             LocalDateTime.now(),
             "sirin",
             LocalDateTime.now(),
