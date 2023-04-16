@@ -6,6 +6,7 @@ import project.board.domain.CommentReply;
 import project.board.domain.UserAccount;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,14 +38,14 @@ public record ArticleCommentDto(
     }
 
     public static ArticleCommentDto from(ArticleComment entity) {
-        return new ArticleCommentDto(
+         return new ArticleCommentDto(
             entity.getId(),
             entity.getArticle().getId(),
             UserAccountDto.from(entity.getUserAccount()),
             entity.getContent(),
             entity.getCommentReplies().stream()
                 .map(CommentReplyDto::from)
-                .collect(Collectors.toSet()),
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
             entity.getCreatedAt(),
             entity.getCreatedBy(),
             entity.getUpdatedAt(),

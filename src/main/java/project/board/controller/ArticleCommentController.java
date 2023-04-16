@@ -52,4 +52,16 @@ public class ArticleCommentController {
         return "redirect:/articles/" + articleId;
     }
 
+    @PostMapping("/{commentId}/replies/{replyId}/delete")
+    public String deleteCommentReply(
+        @PathVariable Long commentId,
+        @PathVariable Long replyId,
+        @AuthenticationPrincipal UserPrincipal userPrincipal,
+        Long articleId
+    ) {
+        articleCommentService.deleteArticleCommentReply(replyId, commentId, userPrincipal.username());
+
+        return "redirect:/articles/" + articleId;
+    }
+
 }
