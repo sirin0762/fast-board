@@ -76,10 +76,19 @@
                                             </form>
                                         </div>
                                         <div class="collapse" th:id="r + ${articleComment.id}">
-                                            <div id="comment-reply" class="d-flex align-items-center gap-1 border-bottom rounded p-sm-1">
-                                                <img src="/images/reply_direction.png" alt=""/>
-                                                <h6 class="bold m-0">Sirin</h6>
-                                                <p>lorem ipsum</p>
+                                            <div id="comment-reply" class="d-flex align-items-center justify-content-between gap-1">
+                                                <div class="d-flex align-items-center gap-1 border-bottom rounded p-sm-1">
+                                                    <img src="/images/reply_direction.png" alt=""/>
+                                                    <h6 class="bold m-0">Sirin</h6>
+                                                    <p>lorem ipsum</p>
+                                                </div>
+                                                <div>
+                                                    <form id="delete-comment-reply-form">
+                                                        <input type="hidden" class="article-id">
+                                                        <button class="btn btn-danger btn-sm me-md-2" type="submit">삭제</button>
+                                                    </form>
+                                                </div>
+
                                             </div>
                                         </div>
                                         <div class="collapse" th:id="r + ${articleComment.id}">

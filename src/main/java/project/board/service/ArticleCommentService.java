@@ -70,4 +70,8 @@ public class ArticleCommentService {
 
     }
 
+    public void deleteArticleCommentReply(Long replyId, Long commentId, String userId) {
+        commentReplyRepository.deleteByIdAndAndArticleComment_IdAndUserAccount_UserId(replyId, commentId, userId);
+    }
+
 }
