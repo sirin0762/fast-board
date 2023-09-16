@@ -1,3 +1,12 @@
+spring:
+  profiles:
+    default: local
+  datasource:
+    url: jdbc:h2:mem:~/board-project
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
 debug: false
 
 management:
@@ -11,8 +20,29 @@ logging:
     project.board: debug
     org.springframework.web.servlet: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
-
+---
 spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+
+  h2:
+    console:
+      enabled: true
+---
+spring:
+  profiles:
+    active: prod
+    include: oauth
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
