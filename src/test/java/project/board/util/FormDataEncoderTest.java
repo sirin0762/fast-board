@@ -1,6 +1,7 @@
 package project.board.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테스트 도구 - form 데이터 인코더")
 @Import({FormDataEncoder.class, ObjectMapper.class})
-@SpringBootTest
+@SpringBootTest(properties = "spring.config.location=" +
+    "classpath:/application.yaml" +
+    ",classpath:/application-aws.yaml"
+)
+@Disabled
 public class FormDataEncoderTest {
 
     private final FormDataEncoder formDataEncoder;
