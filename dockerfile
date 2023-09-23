@@ -10,10 +10,9 @@ ARG JAR_FILE=./build/libs/board-v1.1.jar
 COPY ${JAR_FILE} app.jar
 
 # .env 파일을 현재 디렉토리에서 복사
-COPY .env .env
-
+COPY .env ./
 # .env 파일 내의 환경 변수 설정
-RUN set -o allexport && source .env && set +o allexport
+RUN export $(cat .env | xargs)
 
 # 빌드된 이미지가 run될 때 실행할 명령어
 ENTRYPOINT ["java","-jar","app.jar"]
