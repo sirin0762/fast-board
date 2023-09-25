@@ -22,7 +22,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    database: mysql
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
@@ -31,6 +30,8 @@ spring:
     properties:
       hibernate.format_sql: true
       hibernate.default_batch_fetch_size: 100
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
 
   sql.init.mode: always
   data:

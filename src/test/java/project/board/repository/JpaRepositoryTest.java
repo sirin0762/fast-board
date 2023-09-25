@@ -3,6 +3,7 @@ package project.board.repository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -18,10 +19,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*;
 
 @DisplayName("Jpa 연결 테스트")
 @Import(JpaRepositoryTest.TestJpaConfiguration.class)
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 class JpaRepositoryTest {
 
     private final ArticleRepository articleRepository;
