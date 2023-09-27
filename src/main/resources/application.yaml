@@ -1,26 +1,58 @@
-debug: false
+spring:
+  profiles:
+    default: local
+    include: oauth, aws
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
+  datasource:
+    url: jdbc:h2:mem:~/boardProjectApplication
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+server:
+  port: 9100
 
 logging:
   level:
     project.board: debug
     org.springframework.web.servlet: debug
 
+---
 spring:
-  profiles:
-    include: oauth, aws
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+
+  h2:
+    console:
+      enabled: true
+
+---
+spring:
   config:
     import: optional:file:.env[.properties]
+    activate:
+      on-profile: prod
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     defer-datasource-initialization: true
     hibernate:
@@ -34,12 +66,29 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
   sql.init.mode: always
+
   data:
     rest:
       base-path: /api
       detection-strategy: annotated
+
   thymeleaf3:
     decoupled-logic: true
 
-server:
-  port: 9100
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
