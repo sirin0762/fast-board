@@ -10,11 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.test.context.ActiveProfiles;
 import project.board.configuration.JpaConfiguration;
 import project.board.domain.Article;
 import project.board.domain.ArticleComment;
 import project.board.domain.UserAccount;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +26,7 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @DisplayName("Jpa 연결 테스트")
 @Import(JpaRepositoryTest.TestJpaConfiguration.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = NONE)
+@ActiveProfiles("test")
 class JpaRepositoryTest {
 
     private final ArticleRepository articleRepository;
@@ -42,17 +44,20 @@ class JpaRepositoryTest {
     }
 
     @Test
-    @DisplayName("select test")
+    @DisplayName("select 테스트")
     void JpaSelectTest() {
         // given
-
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("userId", "password", null, null, null));
+        articleRepository.save(
+            Article.of(userAccount, "new Title", "new Content", "new Hashtag")
+        );
         // when
         List<Article> articles = articleRepository.findAll();
 
         // then
         assertThat(articles)
             .isNotNull()
-            .hasSize(123);
+            .hasSize(1);
     }
 
     @Test
@@ -74,21 +79,29 @@ class JpaRepositoryTest {
     @DisplayName("update 테스트")
     void JpaUpdateTest() {
         // given
-        Article article = articleRepository.findById(1L).orElseThrow();
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("userId", "password", null, null, null));
+        Article savedArticle = articleRepository.save(
+            Article.of(userAccount, "new Title", "new Content", "new Hashtag")
+        );
+        Article article = articleRepository.findById(savedArticle.getId()).orElseThrow();
         String updatedHashtag = "#newHashtag";
         article.setHashtag(updatedHashtag);
 
         // when
-        Article savedArticle = articleRepository.saveAndFlush(article);
+        Article updatedArticle = articleRepository.saveAndFlush(article);
 
         // then
-        assertThat(savedArticle).hasFieldOrPropertyWithValue("hashtag", updatedHashtag);
+        assertThat(updatedArticle).hasFieldOrPropertyWithValue("hashtag", updatedHashtag);
     }
 
     @Test
     @DisplayName("delete 테스트")
     void JpaDeleteTest() {
         // given
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("userId", "password", null, null, null));
+        articleRepository.save(
+            Article.of(userAccount, "new Title", "new Content", "new Hashtag")
+        );
         Article article = articleRepository.findById(1L).orElseThrow();
         long previousArticleCount = articleRepository.count();
         long previousArticleCommentCount = articleCommentRepository.count();
