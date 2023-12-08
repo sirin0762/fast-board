@@ -15,4 +15,4 @@ COPY .env ./
 RUN export $(cat .env | xargs)
 
 # 빌드된 이미지가 run될 때 실행할 명령어
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=prod","app.jar"]
